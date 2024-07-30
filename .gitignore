@@ -1,0 +1,7 @@
+# Node.js
+node_modules
+./api/node_modules/
+./ui/node_modules/
+.env
+.env.local
+node_modules
