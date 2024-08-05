@@ -1,0 +1,77 @@
+/* theme/variables.css */
+:root {
+	/* Background Colors */
+
+	--ion-font-family: "Press Start 2P, cursive";
+	--ion-background-color: #111111;
+	--ion-background-color-light: #1a1a1a;
+	--ion-background-color-dark: #000000;
+
+	/* Text Colors */
+	--ion-text-color: #00ff00;
+	--ion-text-color-dark: #00cc00;
+	--ion-text-color-light: #33ff33;
+	--ion-text-color-muted: #66ff66;
+
+	/* Button Variables */
+	--ion-color-primary: #ffcc00;
+	--ion-color-primary-contrast: #000000;
+	--ion-color-primary-shade: #ffd700;
+	--ion-color-primary-tint: #ffd700;
+
+	--ion-color-secondary: #00cc00;
+	--ion-color-secondary-contrast: #000000;
+	--ion-color-secondary-shade: #33ff33;
+	--ion-color-secondary-tint: #33ff33;
+
+	/* Other Variables */
+	--ion-font-family: "Press Start 2P", "Courier New", Courier, monospace;
+
+	/* Font Sizes */
+	--ion-font-size-small: 0.875rem;
+	--ion-font-size-medium: 1rem;
+	--ion-font-size-large: 1.25rem;
+	--ion-font-size-xlarge: 1.5rem;
+
+	/* Font Weights */
+	--ion-font-weight-normal: 400;
+	--ion-font-weight-bold: 700;
+
+	/* Line Heights */
+	--ion-line-height-normal: 1.5;
+	--ion-line-height-dense: 1.25;
+
+	/* Spacing */
+	--ion-spacing-xxs: 4px;
+	--ion-spacing-xs: 8px;
+	--ion-spacing-sm: 12px;
+	--ion-spacing-md: 16px;
+	--ion-spacing-lg: 24px;
+	--ion-spacing-xl: 32px;
+	--ion-spacing-xxl: 40px;
+
+	/* Border Radius */
+	--ion-border-radius-small: 4px;
+	--ion-border-radius-medium: 8px;
+	--ion-border-radius-large: 16px;
+	--ion-border-radius-round: 50%;
+
+	/* Shadows */
+	--ion-box-shadow-light: 0 2px 4px rgba(0, 255, 0, 0.2);
+	--ion-box-shadow-medium: 0 4px 8px rgba(0, 255, 0, 0.4);
+	--ion-box-shadow-heavy: 0 8px 16px rgba(0, 255, 0, 0.6);
+
+	/* Transition Timings */
+	--ion-transition-fast: 0.2s;
+	--ion-transition-medium: 0.4s;
+	--ion-transition-slow: 0.6s;
+
+	/* Z-Index */
+	--ion-z-index-dropdown: 1000;
+	--ion-z-index-modal: 1050;
+	--ion-z-index-tooltip: 1100;
+
+	--ion-safe-area-top: 20px;
+	--ion-safe-area-bottom: 20px;
+	--ion-safe-area-left: 20px;
+}

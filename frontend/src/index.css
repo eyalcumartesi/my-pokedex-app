@@ -1,0 +1,50 @@
+@layer reset, base, tokens, recipes, utilities;
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+/* Reset */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* Base Styles */
+body {
+	padding: 0;
+	font-family: "Press Start 2P", cursive;
+	background-color: #111111;
+	color: #00ff00;
+	margin: 0 auto;
+	box-sizing: border-box;
+}
+
+/* Typing Animation */
+@keyframes typing {
+	from {
+		width: 0;
+	}
+	to {
+		width: 100%;
+	}
+}
+
+.typing {
+	overflow: hidden;
+	white-space: nowrap;
+	border-right: 3px solid;
+	animation:
+		typing 2s steps(30, end),
+		blink-caret 0.75s step-end infinite;
+}
+
+@keyframes blink-caret {
+	from,
+	to {
+		border-color: transparent;
+	}
+	50% {
+		border-color: #00ff00;
+	}
+}

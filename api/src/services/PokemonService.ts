@@ -19,6 +19,7 @@ export class PokemonService {
 		}
 
 		const response = await axios.get(`${API_BASE_URL}/pokemon/${id}`);
+		console.log(response);
 		const data = response.data;
 		const pokemon = new Pokemon(data.id, data.name);
 		this.pokemons.set(id, pokemon);
@@ -34,12 +35,14 @@ export class PokemonService {
 		const response = await axios.get(`${API_BASE_URL}/pokemon`, {
 			params: { limit, offset },
 		});
+		console.log(response.data.results);
+
 		const data = response.data.results;
 		return data.map((item: any) => new Pokemon(item.name, item.url));
 	}
 
 	async searchPokemons(query: string): Promise<Pokemon[]> {
-		const response = await axios.get(`${API_BASE_URL}/pokemon?limit=1000`);
+		const response = await axios.get(`${API_BASE_URL}/pokemon?limit=100`);
 		const data = response.data.results;
 		return data
 			.filter((pokemon: any) => pokemon.name.includes(query))
