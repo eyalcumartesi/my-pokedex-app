@@ -1,6 +1,6 @@
 import { IonButton, IonToolbar } from "@ionic/react";
 import React from "react";
-import { useLogout } from "../hooks/useAuth"; // Ensure the correct path to the hook
+import { useLogout } from "../hooks/useAuth";
 import { css } from "../../styled-system/css";
 import { useHistory } from "react-router";
 
@@ -11,6 +11,7 @@ const ToolBar: React.FC = () => {
 	const handleLogout = () => {
 		logoutMutate(undefined, {
 			onSuccess: () => {
+				localStorage.removeItem("token");
 				history.push("/login");
 			},
 		});

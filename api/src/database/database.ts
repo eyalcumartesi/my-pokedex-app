@@ -14,6 +14,7 @@ export async function initDatabase() {
 	await db.exec(`CREATE TABLE users (
     id TEXT PRIMARY KEY,
     username TEXT UNIQUE,
+		two_factor_secret TEXT,
     password TEXT,
     salt TEXT,
     favorites TEXT

@@ -48,3 +48,7 @@ body {
 		border-color: #00ff00;
 	}
 }
+
+ion-card {
+	padding-bottom: 2rem;
+}

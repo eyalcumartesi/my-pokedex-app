@@ -1,4 +1,3 @@
-// SignUp.tsx
 import {
 	IonButton,
 	IonCol,
@@ -8,19 +7,20 @@ import {
 	IonPage,
 	IonRow,
 	IonTitle,
-	IonToolbar,
 } from "@ionic/react";
 import { personCircle } from "ionicons/icons";
 import axios from "axios";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 
-const SignUp = () => {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [message, setMessage] = useState("");
-	const [isError, setIsError] = useState(false);
+const SignUp: React.FC = () => {
+	const [username, setUsername] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [signedUp, setSignedUp] = useState<boolean>(false);
+	const [confirmPassword, setConfirmPassword] = useState<string>("");
+	const [message, setMessage] = useState<string>("");
+	const [isError, setIsError] = useState<boolean>(false);
+	const [qrCode, setQrCode] = useState<string>("");
 	const history = useHistory();
 
 	const handleSignUp = async () => {
@@ -30,14 +30,17 @@ const SignUp = () => {
 			return;
 		}
 
-		const signUpData = {
-			username: username,
-			password: password,
-		};
+		const signUpData = { username, password };
 
 		try {
-			await axios.post("http://localhost:5050/auth/signup", signUpData);
-			history.push("/generate");
+			const response = await axios.post(
+				"http://localhost:5050/auth/signup",
+				signUpData
+			);
+			setQrCode(response.data.qrCode);
+			setSignedUp(true);
+			setMessage("Please scan the QR code with your 2FA app.");
+			setIsError(false);
 		} catch (error) {
 			setMessage("Registration failed! Please try again.");
 			setIsError(true);
@@ -117,13 +120,29 @@ const SignUp = () => {
 							{isError && (
 								<p style={{ color: "red", fontSize: "small" }}>{message}</p>
 							)}
-							<IonButton
-								expand="block"
-								onClick={handleSignUp}
-								style={{ marginTop: "10px" }}
-							>
-								Sign Up
-							</IonButton>
+							{!isError && qrCode && (
+								<>
+									<p>{message}</p>
+									<img src={qrCode} alt="2FA QR Code" />
+								</>
+							)}
+							{!signedUp ? (
+								<IonButton
+									expand="block"
+									onClick={handleSignUp}
+									style={{ marginTop: "10px" }}
+								>
+									Sign Up
+								</IonButton>
+							) : (
+								<IonButton
+									expand="block"
+									onClick={() => history.push("/login")}
+									style={{ marginTop: "10px" }}
+								>
+									Finish
+								</IonButton>
+							)}
 							<p
 								style={{
 									fontSize: "medium",

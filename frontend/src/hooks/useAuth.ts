@@ -1,5 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
-import { login, register, signout } from "../api/auth";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+	login,
+	register,
+	signout,
+	verify2FA,
+	validateToken,
+} from "../api/auth";
 
 export const useLogin = () => {
 	return useMutation({
@@ -28,5 +34,19 @@ export const useRegister = () => {
 export const useLogout = () => {
 	return useMutation({
 		mutationFn: () => signout(),
+	});
+};
+
+export const use2FA = () => {
+	return useMutation({
+		mutationFn: ({ token, code }: { token: string; code: string }) =>
+			verify2FA(token, code),
+	});
+};
+
+export const useAuth = () => {
+	return useQuery({
+		queryKey: ["auth"],
+		queryFn: validateToken,
 	});
 };

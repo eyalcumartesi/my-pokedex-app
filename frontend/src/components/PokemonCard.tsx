@@ -16,14 +16,14 @@ import {
 const cardStyle = (size: "small" | "big") =>
 	css({
 		backgroundColor: "var(--ion-background-color)",
-		minWidth:
+		width:
 			size === "big"
 				? { smDown: "20rem", smTo2xl: "20rem" }
-				: { smDown: "10rem", smTo2xl: "10rem" },
-		height:
+				: { smDown: "100%", smTo2xl: "100%" },
+		minHeight:
 			size === "big"
 				? { smDown: "25rem", smTo2xl: "30rem" }
-				: { smDown: "12.5rem", smTo2xl: "15rem" },
+				: { smDown: "30rem", smTo2xl: "30rem" },
 		color: "#00ff00",
 		border: "3px solid #00cc00",
 		borderRadius: "12px",
@@ -31,7 +31,7 @@ const cardStyle = (size: "small" | "big") =>
 		padding:
 			size === "big"
 				? { smDown: "0 0 2rem 0", smTo2xl: "0 0rem" }
-				: { smDown: "0 0 1rem 0", smTo2xl: "0 0rem" },
+				: { smDown: "0 0 1rem 0", smTo2xl: "3rem" },
 		fontFamily: "Press Start 2P, monospace",
 		display: "flex",
 		gap: "0.5rem",
@@ -41,10 +41,8 @@ const cardStyle = (size: "small" | "big") =>
 		textAlign: "left",
 		"& img": {
 			width: "100%",
-			height:
-				size === "big"
-					? { smDown: "6rem", mdToLg: "12rem" }
-					: { smDown: "2.5rem", mdToLg: "5rem" },
+			height: "10em",
+
 			objectFit: "contain",
 			backgroundColor: "rgba(255,255,255,0.1)",
 			marginBottom: size === "big" ? "10rem" : "5rem",
