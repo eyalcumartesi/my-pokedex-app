@@ -34,7 +34,7 @@ const SignUp: React.FC = () => {
 
 		try {
 			const response = await axios.post(
-				"http://localhost:5050/auth/signup",
+				process.env.REACT_APP_API_URL + "/signup",
 				signUpData
 			);
 			setQrCode(response.data.qrCode);
