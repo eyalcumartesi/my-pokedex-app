@@ -34,7 +34,7 @@ const SignUp: React.FC = () => {
 
 		try {
 			const response = await axios.post(
-				process.env.REACT_APP_API_URL + "/signup",
+				import.meta.env.VITE_API_BASE_URL + "/signup",
 				signUpData
 			);
 			setQrCode(response.data.qrCode);

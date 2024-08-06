@@ -1,6 +1,10 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_BASE_URL;
+
+if (!API_URL) {
+	throw new Error("API_URL is not defined");
+}
 
 interface AuthResponse {
 	token: string;
