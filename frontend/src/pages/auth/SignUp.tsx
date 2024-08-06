@@ -34,9 +34,10 @@ const SignUp: React.FC = () => {
 
 		try {
 			const response = await axios.post(
-				import.meta.env.VITE_API_BASE_URL + "/signup",
+				import.meta.env.VITE_API_BASE_URL + "/auth/signup",
 				signUpData
 			);
+			console.log(response);
 			setQrCode(response.data.qrCode);
 			setSignedUp(true);
 			setMessage("Please scan the QR code with your 2FA app.");
