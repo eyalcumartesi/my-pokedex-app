@@ -79,6 +79,7 @@ const App: React.FC = () => {
 						className={css({
 							"--background": "#111111",
 						})}
+						slot="bottom"
 					>
 						<IonTabButton tab="tab1" href="/generate">
 							<IonIcon aria-hidden="true" icon={triangle} />
