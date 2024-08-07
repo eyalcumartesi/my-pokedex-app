@@ -7,7 +7,7 @@ export interface Pokemon {
 	types: Array<PokemonType>;
 	abilities: Array<PokemonAbility>;
 	stats: Array<PokemonStat>;
-	sprites: PokemonSprites;
+	sprites?: PokemonSprites;
 	pokemon_id: string;
 	isFavorite?: boolean;
 }

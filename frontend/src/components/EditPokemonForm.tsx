@@ -155,38 +155,7 @@ const EditPokemonForm: React.FC<{ pokemon: Pokemon; onClose: () => void }> = ({
 					className={input({ size: "sm" })}
 				/>
 			</IonItem>
-			<IonItem>
-				<IonLabel class="ion-margin" position="fixed">
-					Front Sprite URL
-				</IonLabel>
-				<input
-					type="url"
-					value={sprites.front_default}
-					onChange={(e) =>
-						setSprites((prev) => ({
-							...prev,
-							front_default: e.target.value!,
-						}))
-					}
-					className={input({ size: "sm" })}
-				/>
-			</IonItem>
-			<IonItem>
-				<IonLabel class="ion-margin" position="fixed">
-					Back Sprite URL
-				</IonLabel>
-				<input
-					type="url"
-					value={sprites.back_default}
-					onChange={(e) =>
-						setSprites((prev) => ({
-							...prev,
-							back_default: e.target.value!,
-						}))
-					}
-					className={input({ size: "sm" })}
-				/>
-			</IonItem>
+
 			<IonButton
 				expand="block"
 				onClick={handleUpdatePokemon}

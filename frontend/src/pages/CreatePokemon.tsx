@@ -43,9 +43,11 @@ const CreatePokemon: React.FC = () => {
 	const history = useHistory();
 	const savePokemonMutation = useSavePokemon();
 
+	const idRandom = Math.random().toString(36).substr(2, 9);
 	const handleSavePokemon = () => {
 		const newPokemon = {
-			id: Math.random().toString(36).substr(2, 9),
+			id: idRandom,
+			pokemon_id: idRandom,
 			name,
 			height: Number(height),
 			weight: Number(weight),
@@ -56,7 +58,8 @@ const CreatePokemon: React.FC = () => {
 				slot: 1,
 				ability: { name: ability, url: "" },
 			})),
-			sprites,
+
+			stats: [],
 		};
 
 		savePokemonMutation.mutate(newPokemon, {
@@ -161,38 +164,7 @@ const CreatePokemon: React.FC = () => {
 						className={input({ size: "md" })}
 					/>
 				</IonItem>
-				<IonItem className="ion-margin">
-					<IonLabel position="stacked" class="ion-margin-vertical">
-						Front Sprite URL
-					</IonLabel>
-					<IonInput
-						type="url"
-						value={sprites.front_default}
-						onIonChange={(e) =>
-							setSprites((prev) => ({
-								...prev,
-								front_default: e.detail.value!,
-							}))
-						}
-						className={input({ size: "md" })}
-					/>
-				</IonItem>
-				<IonItem className="ion-margin">
-					<IonLabel position="stacked" class="ion-margin-vertical">
-						Back Sprite URL
-					</IonLabel>
-					<IonInput
-						type="url"
-						value={sprites.back_default}
-						onIonChange={(e) =>
-							setSprites((prev) => ({
-								...prev,
-								back_default: e.detail.value!,
-							}))
-						}
-						className={input({ size: "md" })}
-					/>
-				</IonItem>
+
 				<IonButton
 					expand="full"
 					onClick={handleSavePokemon}
