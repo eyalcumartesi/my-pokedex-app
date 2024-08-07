@@ -72,7 +72,11 @@ const CreatePokemon: React.FC = () => {
 	return (
 		<IonPage>
 			<IonHeader>
-				<IonToolbar>
+				<IonToolbar
+					className={css({
+						"--background": "black",
+					})}
+				>
 					<IonTitle>Create New Pokémon</IonTitle>
 				</IonToolbar>
 			</IonHeader>

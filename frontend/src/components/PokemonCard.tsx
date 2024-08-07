@@ -70,8 +70,18 @@ const PokemonCard: React.FC<{
 	return (
 		<>
 			<IonCard className={cardStyle(size)}>
-				{pokemon.sprites && (
+				{pokemon.sprites ? (
 					<img src={pokemon.sprites?.front_default} alt={pokemon.name} />
+				) : (
+					<div
+						className={css({
+							width: "100%",
+							height: "10em",
+							objectFit: "contain",
+							backgroundColor: "rgba(255,255,255,0.1)",
+							marginBottom: size === "big" ? "10rem" : "5rem",
+						})}
+					></div>
 				)}
 				<IonCardHeader
 					className={css({
@@ -81,7 +91,7 @@ const PokemonCard: React.FC<{
 					<IonCardTitle
 						className={css({
 							color: "white",
-							fontSize: size === "big" ? "2rem" : "1rem",
+							fontSize: size === "big" ? "1.5rem" : "1rem",
 						})}
 					>
 						{pokemon.name}
