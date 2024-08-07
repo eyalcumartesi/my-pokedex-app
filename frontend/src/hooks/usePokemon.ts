@@ -11,10 +11,10 @@ import {
 import { Pokemon } from "../types/Pokemon";
 
 localforage.config({
-	driver: localforage.INDEXEDDB, // Force WebSQL; same as using setDriver()
+	driver: localforage.INDEXEDDB,
 	name: "my-pokedex-app",
 	version: 1.0,
-	storeName: "keyvaluepairs", // Should be alphanumeric, with underscores.
+	storeName: "pokemons",
 	description: "some description",
 });
 

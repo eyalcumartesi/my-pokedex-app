@@ -1,5 +1,3 @@
-// public/service-worker.js
-
 self.addEventListener("install", (event) => {
 	event.waitUntil(
 		caches.open("pokemon-cache").then((cache) => {
@@ -19,9 +17,24 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-	event.respondWith(
-		caches.match(event.request).then((response) => {
-			return response || fetch(event.request);
-		})
-	);
+	if (event.request.url.includes("/api/")) {
+		event.respondWith(
+			caches.open("api-cache").then((cache) => {
+				return fetch(event.request)
+					.then((response) => {
+						cache.put(event.request.url, response.clone());
+						return response;
+					})
+					.catch(() => {
+						return cache.match(event.request);
+					});
+			})
+		);
+	} else {
+		event.respondWith(
+			caches.match(event.request).then((response) => {
+				return response || fetch(event.request);
+			})
+		);
+	}
 });

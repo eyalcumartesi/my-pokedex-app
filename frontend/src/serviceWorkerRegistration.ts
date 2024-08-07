@@ -1,5 +1,3 @@
-// src/serviceWorkerRegistration.ts
-
 type Config = {
 	onUpdate?: (registration: ServiceWorkerRegistration) => void;
 	onSuccess?: (registration: ServiceWorkerRegistration) => void;
