@@ -1,4 +1,5 @@
-import React from "react";
+// src/components/PokemonCard.tsx
+import React, { useState } from "react";
 import { css } from "../../styled-system/css";
 import { Pokemon } from "../types/Pokemon";
 import {
@@ -11,7 +12,9 @@ import {
 	IonItem,
 	IonList,
 	IonText,
+	IonModal,
 } from "@ionic/react";
+import EditPokemonForm from "./EditPokemonForm";
 
 const cardStyle = (size: "small" | "big") =>
 	css({
@@ -59,101 +62,123 @@ const cardStyle = (size: "small" | "big") =>
 
 const PokemonCard: React.FC<{
 	pokemon: Pokemon;
-	onDelete?: (id: number) => void;
+	onDelete?: (id: string) => void;
 	size: "small" | "big";
 }> = ({ pokemon, onDelete, size }) => {
+	const [showEditModal, setShowEditModal] = useState(false);
+
 	return (
-		<IonCard className={cardStyle(size)}>
-			<img src={pokemon.sprites.front_default} alt={pokemon.name} />
-			<IonCardHeader
-				className={css({
-					mb: size === "big" ? "5" : "2.5",
-				})}
-			>
-				<IonCardTitle
+		<>
+			<IonCard className={cardStyle(size)}>
+				<img src={pokemon.sprites.front_default} alt={pokemon.name} />
+				<IonCardHeader
 					className={css({
-						color: "white",
-						fontSize: size === "big" ? "2rem" : "1rem",
+						mb: size === "big" ? "5" : "2.5",
 					})}
 				>
-					{pokemon.name}
-				</IonCardTitle>
-			</IonCardHeader>
-			<IonContent>
-				<IonList
-					className={css({
-						fontSize: "small",
-						margin: 0,
-						"& ion-item": {
-							margin: 0,
-						},
-					})}
-					inset={true}
-				>
-					<IonItem slot="start">
-						<IonText
-							className={css({
-								fontSize: size === "big" ? "x-small" : "xx-small",
-							})}
-						>
-							Height: {pokemon.height / 10} m
-						</IonText>
-					</IonItem>
-					<IonItem slot="start">
-						<IonText
-							className={css({
-								fontSize: size === "big" ? "x-small" : "xx-small",
-							})}
-						>
-							Weight: {pokemon.weight / 10} kg
-						</IonText>
-					</IonItem>
-					<IonItem slot="start">
-						<IonText
-							className={css({
-								fontSize: size === "big" ? "x-small" : "xx-small",
-							})}
-						>
-							Base Experience: {pokemon.base_experience}
-						</IonText>
-					</IonItem>
-					<IonItem slot="start">
-						<IonText
-							className={css({
-								fontSize: size === "big" ? "x-small" : "xx-small",
-							})}
-						>
-							Type: {pokemon.types.map((type) => type.type.name).join(", ")}
-						</IonText>
-					</IonItem>
-					<IonItem slot="start">
-						<IonText
-							className={css({
-								fontSize: size === "big" ? "x-small" : "xx-small",
-							})}
-						>
-							Abilities:{" "}
-							{pokemon.abilities
-								.map((ability) => ability.ability.name)
-								.join(", ")}
-						</IonText>
-					</IonItem>
-				</IonList>
-			</IonContent>
-			{onDelete && (
-				<IonCardSubtitle>
-					<IonButton
-						size="small"
+					<IonCardTitle
 						className={css({
-							fontSize: size === "big" ? "2rem" : "0.5rem",
+							color: "white",
+							fontSize: size === "big" ? "2rem" : "1rem",
 						})}
-						onClick={() => onDelete(pokemon.id)}
 					>
-						Delete
-					</IonButton>
-				</IonCardSubtitle>
-			)}
-		</IonCard>
+						{pokemon.name}
+					</IonCardTitle>
+				</IonCardHeader>
+				<IonContent>
+					<IonList
+						className={css({
+							fontSize: "small",
+							margin: 0,
+							"& ion-item": {
+								margin: 0,
+							},
+						})}
+						inset={true}
+					>
+						<IonItem slot="start">
+							<IonText
+								className={css({
+									fontSize: size === "big" ? "x-small" : "xx-small",
+								})}
+							>
+								Height: {pokemon.height / 10} m
+							</IonText>
+						</IonItem>
+						<IonItem slot="start">
+							<IonText
+								className={css({
+									fontSize: size === "big" ? "x-small" : "xx-small",
+								})}
+							>
+								Weight: {pokemon.weight / 10} kg
+							</IonText>
+						</IonItem>
+						<IonItem slot="start">
+							<IonText
+								className={css({
+									fontSize: size === "big" ? "x-small" : "xx-small",
+								})}
+							>
+								Base Experience: {pokemon.base_experience}
+							</IonText>
+						</IonItem>
+						<IonItem slot="start">
+							<IonText
+								className={css({
+									fontSize: size === "big" ? "x-small" : "xx-small",
+								})}
+							>
+								Type: {pokemon.types.map((type) => type.type.name).join(", ")}
+							</IonText>
+						</IonItem>
+						<IonItem slot="start">
+							<IonText
+								className={css({
+									fontSize: size === "big" ? "x-small" : "xx-small",
+								})}
+							>
+								Abilities:{" "}
+								{pokemon.abilities
+									.map((ability) => ability.ability.name)
+									.join(", ")}
+							</IonText>
+						</IonItem>
+					</IonList>
+				</IonContent>
+				{onDelete && (
+					<IonCardSubtitle>
+						<IonButton
+							size="small"
+							className={css({
+								fontSize: size === "big" ? "2rem" : "0.5rem",
+							})}
+							onClick={() => onDelete(pokemon.pokemon_id)}
+						>
+							Delete
+						</IonButton>
+						<IonButton
+							size="small"
+							className={css({
+								fontSize: size === "big" ? "2rem" : "0.5rem",
+							})}
+							onClick={() => setShowEditModal(true)}
+						>
+							Edit
+						</IonButton>
+					</IonCardSubtitle>
+				)}
+			</IonCard>
+			<IonModal
+				isOpen={showEditModal}
+				onDidDismiss={() => setShowEditModal(false)}
+			>
+				<EditPokemonForm
+					pokemon={pokemon}
+					onClose={() => setShowEditModal(false)}
+				/>
+			</IonModal>
+		</>
 	);
 };
 

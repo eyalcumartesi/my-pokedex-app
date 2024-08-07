@@ -1,5 +1,5 @@
 export interface Pokemon {
-	id: number;
+	id: string | number;
 	name: string;
 	height: number;
 	weight: number;
@@ -8,6 +8,7 @@ export interface Pokemon {
 	abilities: Array<PokemonAbility>;
 	stats: Array<PokemonStat>;
 	sprites: PokemonSprites;
+	pokemon_id: string;
 	isFavorite?: boolean;
 }
 

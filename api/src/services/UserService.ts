@@ -130,13 +130,30 @@ class UserService {
 		}
 	}
 
-	async savePokemon(userId: string, pokemonId: string): Promise<void> {
+	async savePokemon(userId: string, pokemon: any): Promise<void> {
 		const db = getDb();
 		try {
+			const {
+				id,
+				name,
+				height,
+				weight,
+				base_experience,
+				types,
+				abilities,
+				sprites,
+			} = pokemon;
 			await db.run(
-				`INSERT INTO saved_pokemons (user_id, pokemon_id) VALUES (?, ?)`,
+				`INSERT INTO saved_pokemons (user_id, pokemon_id, name, height, weight, base_experience, types, abilities, sprites) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 				userId,
-				pokemonId
+				id,
+				name,
+				height,
+				weight,
+				base_experience,
+				JSON.stringify(types),
+				JSON.stringify(abilities),
+				JSON.stringify(sprites)
 			);
 		} catch (err) {
 			console.error(`Error in savePokemon: ${err.message}`);
@@ -148,16 +165,52 @@ class UserService {
 		const db = getDb();
 		try {
 			const pokemons = await db.all(
-				`SELECT pokemon_id FROM saved_pokemons WHERE user_id = ?`,
+				`SELECT * FROM saved_pokemons WHERE user_id = ?`,
 				userId
 			);
-			return pokemons.map((p: { pokemon_id: string }) => p.pokemon_id);
+			return pokemons.map((pokemon: any) => ({
+				...pokemon,
+				types: JSON.parse(pokemon.types),
+				abilities: JSON.parse(pokemon.abilities),
+				sprites: JSON.parse(pokemon.sprites),
+			}));
 		} catch (err) {
 			console.error(`Error in getSavedPokemons: ${err.message}`);
 			throw new Error(err.message);
 		}
 	}
+	async updatePokemon(userId: string, pokemon: any): Promise<void> {
+		const db = getDb();
+		try {
+			const {
+				pokemon_id,
+				name,
+				height,
+				weight,
+				base_experience,
+				types,
+				abilities,
+				sprites,
+			} = pokemon;
 
+			console.log(name);
+			await db.run(
+				`UPDATE saved_pokemons SET name = ?, height = ?, weight = ?, base_experience = ?, types = ?, abilities = ?, sprites = ? WHERE user_id = ? AND pokemon_id = ?`,
+				name,
+				height,
+				weight,
+				base_experience,
+				JSON.stringify(types),
+				JSON.stringify(abilities),
+				JSON.stringify(sprites),
+				userId,
+				pokemon_id
+			);
+		} catch (err) {
+			console.error(`Error in updatePokemon: ${err.message}`);
+			throw new Error(err.message);
+		}
+	}
 	async deletePokemon(userId: string, pokemonId: string): Promise<void> {
 		const db = getDb();
 		try {

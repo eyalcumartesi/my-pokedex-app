@@ -32,7 +32,17 @@ export const savePokemon = async (pokemon: Pokemon): Promise<void> => {
 	);
 };
 
-export const deletePokemon = async (id: number): Promise<void> => {
+export const updatePokemon = async (pokemon: Pokemon): Promise<void> => {
+	const token = getToken();
+	await axios.put(
+		import.meta.env.VITE_API_BASE_URL + "/pokemon/update",
+		pokemon,
+		{
+			headers: { Authorization: `Bearer ${token}` },
+		}
+	);
+};
+export const deletePokemon = async (id: string | number): Promise<void> => {
 	const token = getToken();
 	await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/pokemon/${id}`, {
 		headers: { Authorization: `Bearer ${token}` },

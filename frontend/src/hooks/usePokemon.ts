@@ -4,6 +4,7 @@ import {
 	fetchRandomPokemon,
 	savePokemon,
 	deletePokemon,
+	updatePokemon,
 } from "../api/pokemon";
 import { Pokemon } from "../types/Pokemon";
 
@@ -30,10 +31,20 @@ export const useSavePokemon = () => {
 	});
 };
 
+export const useUpdatePokemon = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (pokemon: Pokemon) => updatePokemon(pokemon),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });
+		},
+	});
+};
+
 export const useDeletePokemon = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (id: number) => deletePokemon(id),
+		mutationFn: (id: string) => deletePokemon(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });
 		},

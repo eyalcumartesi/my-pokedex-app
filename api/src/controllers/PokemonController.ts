@@ -1,7 +1,8 @@
+// src/controllers/PokemonController.ts
 import { Request, Response } from "express";
-import axios from "axios";
 import jwt from "jsonwebtoken";
 import UserService from "../services/UserService";
+import axios from "axios";
 
 const userService = new UserService();
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
@@ -44,15 +45,8 @@ export const getSavedPokemons = async (req: Request, res: Response) => {
 	}
 
 	try {
-		const savedPokemonIds = await userService.getSavedPokemons(userId);
-		const pokemonDataPromises = savedPokemonIds.map((id) =>
-			axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`)
-		);
-		const pokemonDataResponses = await Promise.all(pokemonDataPromises);
-		const fullPokemonData = pokemonDataResponses.map(
-			(response) => response.data
-		);
-		res.json(fullPokemonData);
+		const savedPokemons = await userService.getSavedPokemons(userId);
+		res.json(savedPokemons);
 	} catch (error) {
 		res.status(500).json({ message: "Error fetching saved Pokémon data" });
 	}
@@ -64,13 +58,30 @@ export const savePokemon = async (req: Request, res: Response) => {
 		return res.status(401).json({ message: "Unauthorized" });
 	}
 
-	const { id } = req.body;
+	const pokemon = req.body;
 
 	try {
-		await userService.savePokemon(userId, id);
-		res.status(201).json({ id });
+		await userService.savePokemon(userId, pokemon);
+		res.status(201).json(pokemon);
 	} catch (error) {
 		res.status(500).json({ message: "Error saving Pokémon" });
+	}
+};
+
+export const updatePokemon = async (req: Request, res: Response) => {
+	const userId = getUserIdFromToken(req);
+	if (!userId) {
+		return res.status(401).json({ message: "Unauthorized" });
+	}
+
+	const pokemon = req.body;
+
+	try {
+		await userService.updatePokemon(userId, pokemon);
+		res.status(200).json(pokemon);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: "Error updating Pokémon" });
 	}
 };
 

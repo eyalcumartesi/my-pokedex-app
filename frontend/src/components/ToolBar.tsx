@@ -14,6 +14,9 @@ const ToolBar: React.FC = () => {
 				localStorage.removeItem("token");
 				history.push("/login");
 			},
+			onError: (error) => {
+				console.error("Logout failed", error);
+			},
 		});
 	};
 

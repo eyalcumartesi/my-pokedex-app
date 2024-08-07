@@ -56,7 +56,7 @@ const SavedPokemons: React.FC = () => {
 	const deletePokemonMutation = useDeletePokemon();
 
 	const handleDelete = useCallback(
-		(id: number) => {
+		(id: string) => {
 			deletePokemonMutation.mutate(id);
 		},
 		[deletePokemonMutation]
@@ -223,7 +223,7 @@ const SavedPokemons: React.FC = () => {
 							<IonRow class="ion-margin">
 								{currentPokemons?.map((pokemon: Pokemon) => (
 									<IonCol
-										key={pokemon.id}
+										key={pokemon.pokemon_id}
 										sizeXs="12"
 										sizeSm="12"
 										sizeMd="6"
@@ -231,9 +231,9 @@ const SavedPokemons: React.FC = () => {
 										sizeXl="3"
 									>
 										<PokemonCard
-											key={pokemon.id}
+											key={pokemon.pokemon_id}
 											pokemon={pokemon}
-											onDelete={handleDelete}
+											onDelete={() => handleDelete(pokemon.pokemon_id)}
 											size="small"
 										/>
 									</IonCol>
