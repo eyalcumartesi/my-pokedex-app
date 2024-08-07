@@ -19,15 +19,14 @@ self.addEventListener("install", (event) => {
 self.addEventListener("fetch", (event) => {
 	if (event.request.url.includes("/api/")) {
 		event.respondWith(
-			caches.open("api-cache").then((cache) => {
-				return fetch(event.request)
-					.then((response) => {
-						cache.put(event.request.url, response.clone());
-						return response;
-					})
-					.catch(() => {
-						return cache.match(event.request);
-					});
+			caches.open("api-cache").then(async (cache) => {
+				try {
+					const response = await fetch(event.request);
+					cache.put(event.request.url, response.clone());
+					return response;
+				} catch {
+					return await cache.match(event.request);
+				}
 			})
 		);
 	} else {
