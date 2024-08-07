@@ -1,17 +1,20 @@
 self.addEventListener("install", (event) => {
 	event.waitUntil(
 		caches.open("pokemon-cache").then((cache) => {
-			return cache.addAll([
-				"/",
-				"/index.html",
-				"/static/js/bundle.js",
-				"/static/js/0.chunk.js",
-				"/static/js/main.chunk.js",
-				"/favicon.ico",
-				"/manifest.json",
-				"/logo192.png",
-				"/logo512.png",
-			]);
+			return cache
+				.addAll([
+					"/",
+					"/index.html",
+					"/src/main.tsx",
+					// Add other files to cache here
+					"/favicon.ico",
+					"/manifest.json",
+					"/logo192.png",
+					"/logo512.png",
+				])
+				.catch((error) => {
+					console.error("Failed to cache during install: ", error);
+				});
 		})
 	);
 });
@@ -24,7 +27,11 @@ self.addEventListener("fetch", (event) => {
 					const response = await fetch(event.request);
 					cache.put(event.request.url, response.clone());
 					return response;
-				} catch {
+				} catch (error) {
+					console.error(
+						"Failed to fetch from network, attempting cache: ",
+						error
+					);
 					return await cache.match(event.request);
 				}
 			})
@@ -32,7 +39,12 @@ self.addEventListener("fetch", (event) => {
 	} else {
 		event.respondWith(
 			caches.match(event.request).then((response) => {
-				return response || fetch(event.request);
+				return (
+					response ||
+					fetch(event.request).catch((error) => {
+						console.error("Fetch failed: ", error);
+					})
+				);
 			})
 		);
 	}

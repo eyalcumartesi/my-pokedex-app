@@ -1,19 +1,20 @@
-// src/index.tsx
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import App from "./App";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { register } from "./serviceWorkerRegistration";
 
 const queryClient = new QueryClient();
+const container = document.getElementById("root");
+const root = createRoot(container!);
 
-ReactDOM.render(
+root.render(
 	<React.StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<App />
 		</QueryClientProvider>
-	</React.StrictMode>,
-	document.getElementById("root")
+	</React.StrictMode>
 );
 
-register(); // Register the service worker
+// Register the service worker
+register();
