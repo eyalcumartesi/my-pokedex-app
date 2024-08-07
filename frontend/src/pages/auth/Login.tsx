@@ -72,15 +72,12 @@ const Login: React.FC = () => {
 		);
 	};
 
-	const handleUserChange = (e: IonInputCustomEvent<InputChangeEventDetail>) => {
-		console.log("user");
-		setUser(e.detail.value!);
+	const handleUserChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setUser(e.target.value!);
 	};
 
-	const handlePasswordChange = (
-		e: IonInputCustomEvent<InputChangeEventDetail>
-	) => {
-		setPassword(e.detail.value!);
+	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setPassword(e.target.value!);
 	};
 
 	const handleCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -128,22 +125,22 @@ const Login: React.FC = () => {
 								}}
 							>
 								<span style={{ marginBottom: "15px", width: "100%" }}>
-									<IonInput
+									<input
 										type="text"
 										placeholder="user"
 										value={user}
 										className={input({ size: "md" })}
-										onIonChange={handleUserChange}
+										onChange={handleUserChange}
 										required
 									/>
 								</span>
 								<span style={{ marginBottom: "15px", width: "100%" }}>
-									<IonInput
+									<input
 										type="password"
 										className={input({ size: "md" })}
 										placeholder="Password"
 										value={password}
-										onIonChange={handlePasswordChange}
+										onChange={handlePasswordChange}
 										required
 									/>
 								</span>
