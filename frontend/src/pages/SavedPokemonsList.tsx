@@ -19,8 +19,8 @@ import { Pokemon } from "../types/Pokemon";
 import {
 	IonInputCustomEvent,
 	InputChangeEventDetail,
-	SelectChangeEventDetail,
 	IonSelectCustomEvent,
+	SelectChangeEventDetail,
 } from "@ionic/core";
 import { input, select } from "../theme/recipes";
 
@@ -46,11 +46,13 @@ const containerStyle = css({
 const itemsPerPageOptions = [2, 4, 6, 8, 10];
 
 const SavedPokemons: React.FC = () => {
-	const [searchTerm, setSearchTerm] = useState<string>("");
-	const [filterType, setFilterType] = useState<string>("");
+	const [state, setState] = useState({
+		searchTerm: "",
+		filterType: "",
+		currentPage: 1,
+		itemsPerPage: 4,
+	});
 	const [filters, setFilters] = useState<string[]>([]);
-	const [currentPage, setCurrentPage] = useState<number>(1);
-	const [itemsPerPage, setItemsPerPage] = useState<number>(4);
 
 	const { data: pokemons, isLoading, error } = useSavedPokemons();
 	const deletePokemonMutation = useDeletePokemon();
@@ -64,7 +66,7 @@ const SavedPokemons: React.FC = () => {
 
 	useEffect(() => {
 		if (pokemons) {
-			const newFilters = new Set(filters);
+			const newFilters = new Set<string>();
 			pokemons.forEach((pok) => {
 				pok.types.forEach((type) => {
 					newFilters.add(type.type.name);
@@ -74,26 +76,24 @@ const SavedPokemons: React.FC = () => {
 		}
 	}, [pokemons]);
 
-	const handleSearchChange = useCallback(
-		(event: IonInputCustomEvent<InputChangeEventDetail>) => {
-			setSearchTerm(event.detail.value!);
-			setCurrentPage(1);
+	const handleInputChange = useCallback(
+		(e: IonInputCustomEvent<InputChangeEventDetail>, field: string) => {
+			setState((prevState) => ({
+				...prevState,
+				[field]: e.detail.value!,
+				currentPage: 1, // Reset to the first page when filters or search terms change
+			}));
 		},
 		[]
 	);
 
-	const handleFilterChange = useCallback(
-		(event: IonSelectCustomEvent<SelectChangeEventDetail>) => {
-			setFilterType(event.detail.value!);
-			setCurrentPage(1);
-		},
-		[]
-	);
-
-	const handleItemsPerPageChange = useCallback(
-		(event: IonSelectCustomEvent<SelectChangeEventDetail>) => {
-			setItemsPerPage(parseInt(event.detail.value!, 10));
-			setCurrentPage(1);
+	const handleSelectChange = useCallback(
+		(e: IonSelectCustomEvent<SelectChangeEventDetail>, field: string) => {
+			setState((prevState) => ({
+				...prevState,
+				[field]: e.detail.value!,
+				currentPage: 1, // Reset to the first page when filters or search terms change
+			}));
 		},
 		[]
 	);
@@ -101,34 +101,34 @@ const SavedPokemons: React.FC = () => {
 	const filteredPokemons = useMemo(() => {
 		return pokemons?.filter((pokemon: Pokemon) => {
 			return (
-				pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-				(filterType
-					? pokemon.types.some((type) => type.type.name === filterType)
+				pokemon.name.toLowerCase().includes(state.searchTerm.toLowerCase()) &&
+				(state.filterType
+					? pokemon.types.some((type) => type.type.name === state.filterType)
 					: true)
 			);
 		});
-	}, [pokemons, searchTerm, filterType]);
+	}, [pokemons, state.searchTerm, state.filterType]);
 
-	const indexOfLastItem = currentPage * itemsPerPage;
-	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+	const indexOfLastItem = state.currentPage * state.itemsPerPage;
+	const indexOfFirstItem = indexOfLastItem - state.itemsPerPage;
 	const currentPokemons = filteredPokemons?.slice(
 		indexOfFirstItem,
 		indexOfLastItem
 	);
 
-	const totalPages = Math.ceil((filteredPokemons?.length || 0) / itemsPerPage);
+	const totalPages = Math.ceil(
+		(filteredPokemons?.length || 0) / state.itemsPerPage
+	);
 
-	const handleNextPage = useCallback(() => {
-		if (currentPage < totalPages) {
-			setCurrentPage((prevPage) => prevPage + 1);
-		}
-	}, [currentPage, totalPages]);
-
-	const handlePreviousPage = useCallback(() => {
-		if (currentPage > 1) {
-			setCurrentPage((prevPage) => prevPage - 1);
-		}
-	}, [currentPage]);
+	const handlePageChange = useCallback((direction: "next" | "prev") => {
+		setState((prevState) => ({
+			...prevState,
+			currentPage:
+				direction === "next"
+					? prevState.currentPage + 1
+					: prevState.currentPage - 1,
+		}));
+	}, []);
 
 	if (isLoading) return <div>Loading...</div>;
 	if (error) return <div>Error: {error.message}</div>;
@@ -149,8 +149,8 @@ const SavedPokemons: React.FC = () => {
 						type="text"
 						className={input({ size: "lg" })}
 						placeholder="Search Pokémon"
-						value={searchTerm}
-						onIonChange={handleSearchChange}
+						value={state.searchTerm}
+						onIonChange={(e) => handleInputChange(e, "searchTerm")}
 					/>
 					<span
 						className={css({
@@ -167,11 +167,10 @@ const SavedPokemons: React.FC = () => {
 						>
 							Pokemon Type
 						</IonText>
-
 						<IonSelect
 							className={select({ size: "md" })}
-							value={filterType}
-							onIonChange={handleFilterChange}
+							value={state.filterType}
+							onIonChange={(e) => handleSelectChange(e, "filterType")}
 						>
 							<IonSelectOption value={""}>ALL TYPES</IonSelectOption>
 							{filters.map((filter) => (
@@ -181,7 +180,6 @@ const SavedPokemons: React.FC = () => {
 							))}
 						</IonSelect>
 					</span>
-
 					<span
 						className={css({
 							display: "flex",
@@ -198,11 +196,10 @@ const SavedPokemons: React.FC = () => {
 						>
 							Cards Per Page
 						</IonText>
-
 						<IonSelect
 							className={select({ size: "md" })}
-							value={itemsPerPage.toString()}
-							onIonChange={handleItemsPerPageChange}
+							value={state.itemsPerPage.toString()}
+							onIonChange={(e) => handleSelectChange(e, "itemsPerPage")}
 						>
 							{itemsPerPageOptions.map((option) => (
 								<IonSelectOption key={option} value={option.toString()}>
@@ -249,16 +246,16 @@ const SavedPokemons: React.FC = () => {
 							}}
 						>
 							<IonButton
-								onClick={handlePreviousPage}
+								onClick={() => handlePageChange("prev")}
 								size="small"
-								disabled={currentPage === 1}
+								disabled={state.currentPage === 1}
 							>
 								Previous
 							</IonButton>
 							<IonButton
 								size="small"
-								onClick={handleNextPage}
-								disabled={currentPage === totalPages}
+								onClick={() => handlePageChange("next")}
+								disabled={state.currentPage === totalPages}
 							>
 								Next
 							</IonButton>

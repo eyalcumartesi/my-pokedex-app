@@ -11,12 +11,11 @@ import {
 	IonToolbar,
 } from "@ionic/react";
 import { personCircle } from "ionicons/icons";
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useLogin, use2FA } from "../../hooks/useAuth";
 import { css } from "../../../styled-system/css";
 import { button, input } from "../../theme/recipes";
-import { IonInputCustomEvent, InputChangeEventDetail } from "@ionic/core";
 
 const Login: React.FC = () => {
 	const [user, setUser] = useState<string>("");
@@ -32,7 +31,8 @@ const Login: React.FC = () => {
 	const { mutate: loginMutate } = useLogin();
 	const { mutate: verify2FAMutate } = use2FA();
 
-	const handleLogin = () => {
+	const handleLogin = (event: React.FormEvent) => {
+		event.preventDefault();
 		setIsLoginLoading(true);
 		loginMutate(
 			{ username: user, password: password },
@@ -56,7 +56,8 @@ const Login: React.FC = () => {
 		);
 	};
 
-	const handle2FA = () => {
+	const handle2FA = (event: React.FormEvent) => {
+		event.preventDefault();
 		verify2FAMutate(
 			{ token, code },
 			{
@@ -72,114 +73,89 @@ const Login: React.FC = () => {
 		);
 	};
 
-	const handleUserChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setUser(e.target.value!);
-	};
-
-	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setPassword(e.target.value!);
-	};
-
-	const handleCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
-		let value = e.target.value!;
-		value = value.replace(/\D/g, "");
-		setCode(value);
-	};
-
 	return (
 		<IonPage>
-			<IonContent class="ion-padding">
-				<IonHeader
+			<IonHeader>
+				<IonToolbar
 					className={css({
 						"--background": "var(--ion-color-primary)",
 					})}
 				>
 					<IonTitle>Login</IonTitle>
-				</IonHeader>
-				<span
-					className={css({
-						display: "flex",
-						flexDirection: "column",
-						gap: "5",
-						alignItems: "column",
-					})}
+				</IonToolbar>
+			</IonHeader>
+			<IonContent class="ion-padding">
+				<IonRow
+					style={{ justifyContent: "center", marginTop: "20px", gap: "2rem" }}
 				>
-					<IonRow
-						style={{ justifyContent: "center", marginTop: "20px", gap: "2rem" }}
-					>
-						<IonCol style={{ textAlign: "center" }}>
-							<IonIcon
-								style={{ fontSize: "70px", color: "#0040ff" }}
-								icon={personCircle}
+					<IonCol style={{ textAlign: "center" }}>
+						<IonIcon
+							style={{ fontSize: "70px", color: "#0040ff" }}
+							icon={personCircle}
+						/>
+					</IonCol>
+				</IonRow>
+				<IonRow style={{ justifyContent: "center", marginTop: "20px" }}>
+					<IonCol size="12" size-md="6">
+						<form
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "center",
+							}}
+							onSubmit={is2FARequired ? handle2FA : handleLogin}
+						>
+							<IonInput
+								type="text"
+								placeholder="User"
+								value={user}
+								className={input({ size: "md" })}
+								onIonChange={(e: CustomEvent) => setUser(e.detail.value!)}
+								required
 							/>
-						</IonCol>
-					</IonRow>
-
-					<IonRow style={{ justifyContent: "center", marginTop: "20px" }}>
-						<IonCol size="12" size-md="6">
-							<form
+							<IonInput
+								type="password"
+								placeholder="Password"
+								value={password}
+								className={input({ size: "md" })}
+								onIonChange={(e: CustomEvent) => setPassword(e.detail.value!)}
+								required
+							/>
+							{is2FARequired && (
+								<IonInput
+									type="text"
+									placeholder="2FA Code"
+									value={code}
+									className={input({ size: "md" })}
+									onIonChange={(e: CustomEvent) =>
+										setCode(e.detail.value!.replace(/\D/g, ""))
+									}
+									required
+								/>
+							)}
+							{isError && (
+								<p style={{ color: "red", fontSize: "small" }}>{message}</p>
+							)}
+							<IonButton
+								type="submit"
+								expand="block"
+								disabled={isLoginLoading}
+								className={button({ visual: "solid", size: "lg" })}
+							>
+								{isLoginLoading ? "Logging in..." : "Login"}
+							</IonButton>
+							<p
 								style={{
-									display: "flex",
-									flexDirection: "column",
-									alignItems: "center",
+									fontSize: "medium",
+									textAlign: "center",
+									marginTop: "15px",
 								}}
 							>
-								<span style={{ marginBottom: "15px", width: "100%" }}>
-									<input
-										type="text"
-										placeholder="user"
-										value={user}
-										className={input({ size: "md" })}
-										onChange={handleUserChange}
-										required
-									/>
-								</span>
-								<span style={{ marginBottom: "15px", width: "100%" }}>
-									<input
-										type="password"
-										className={input({ size: "md" })}
-										placeholder="Password"
-										value={password}
-										onChange={handlePasswordChange}
-										required
-									/>
-								</span>
-								{is2FARequired && (
-									<span style={{ marginBottom: "15px", width: "100%" }}>
-										<input
-											type="text"
-											name="2fa"
-											className={input({ size: "md" })}
-											placeholder="2FA Code"
-											onChange={handleCodeChange}
-											required
-										/>
-									</span>
-								)}
-								{isError && (
-									<p style={{ color: "red", fontSize: "small" }}>{message}</p>
-								)}
-								<IonButton
-									expand="block"
-									onClick={is2FARequired ? handle2FA : handleLogin}
-									disabled={isLoginLoading}
-									className={button({ visual: "solid", size: "lg" })}
-								>
-									{isLoginLoading ? "Logging in..." : "Login"}
-								</IonButton>
-								<p
-									style={{
-										fontSize: "medium",
-										textAlign: "center",
-										marginTop: "15px",
-									}}
-								>
-									Don't have an account? <a href="/signup">Sign up!</a>
-								</p>
-							</form>
-						</IonCol>
-					</IonRow>
-				</span>
+								Don't have an account? <a href="/signup">Sign up!</a>
+							</p>
+						</form>
+					</IonCol>
+				</IonRow>
 			</IonContent>
 		</IonPage>
 	);

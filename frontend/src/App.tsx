@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { Redirect, Route } from "react-router-dom";
 import {
 	IonApp,
@@ -12,7 +12,6 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { ellipse, triangle } from "ionicons/icons";
-import Tab2 from "./pages/SavedPokemonsList";
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/normalize.css";
 import "@ionic/react/css/structure.css";
@@ -26,13 +25,15 @@ import "@ionic/react/css/display.css";
 import "./index.css";
 import "@ionic/react/css/palettes/dark.system.css";
 import "./theme/variables.css";
-import GeneratePokemon from "./pages/GeneratePokemon";
-import Login from "./pages/auth/Login";
-import SignUp from "./pages/auth/SignUp";
 import { css } from "../styled-system/css";
-import CreatePokemon from "./pages/CreatePokemon";
 
 setupIonicReact();
+
+const GeneratePokemon = lazy(() => import("./pages/GeneratePokemon"));
+const SavedPokemonsList = lazy(() => import("./pages/SavedPokemonsList"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const SignUp = lazy(() => import("./pages/auth/SignUp"));
+const CreatePokemon = lazy(() => import("./pages/CreatePokemon"));
 
 const App: React.FC = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -63,24 +64,34 @@ const App: React.FC = () => {
 			<IonReactRouter>
 				<IonTabs>
 					<IonRouterOutlet>
-						<Route exact path="/generate">
-							{isAuthenticated ? <GeneratePokemon /> : <Redirect to="/login" />}
-						</Route>
-						<Route exact path="/saved">
-							{isAuthenticated ? <Tab2 /> : <Redirect to="/login" />}
-						</Route>
-						<Route exact path="/create">
-							{isAuthenticated ? <CreatePokemon /> : <Redirect to="/login" />}
-						</Route>
-						<Route exact path="/login">
-							<Login />
-						</Route>
-						<Route exact path="/signup">
-							<SignUp />
-						</Route>
-						<Route exact path="/">
-							<Redirect to="/generate" />
-						</Route>
+						<Suspense fallback={<div>Loading...</div>}>
+							<Route exact path="/generate">
+								{isAuthenticated ? (
+									<GeneratePokemon />
+								) : (
+									<Redirect to="/login" />
+								)}
+							</Route>
+							<Route exact path="/saved">
+								{isAuthenticated ? (
+									<SavedPokemonsList />
+								) : (
+									<Redirect to="/login" />
+								)}
+							</Route>
+							<Route exact path="/create">
+								{isAuthenticated ? <CreatePokemon /> : <Redirect to="/login" />}
+							</Route>
+							<Route exact path="/login">
+								<Login />
+							</Route>
+							<Route exact path="/signup">
+								<SignUp />
+							</Route>
+							<Route exact path="/">
+								<Redirect to="/generate" />
+							</Route>
+						</Suspense>
 					</IonRouterOutlet>
 					<IonTabBar
 						className={css({

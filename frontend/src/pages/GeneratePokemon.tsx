@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
 	IonButton,
 	IonContent,
@@ -36,7 +36,7 @@ const GeneratePokemon: React.FC = () => {
 	const fetchRandomPokemonMutation = useRandomPokemon();
 	const savePokemonMutation = useSavePokemon();
 
-	const handleGeneratePokemon = () => {
+	const handleGeneratePokemon = useCallback(() => {
 		fetchRandomPokemonMutation.mutate(undefined, {
 			onSuccess: (data) => {
 				setPokemon(data);
@@ -45,13 +45,20 @@ const GeneratePokemon: React.FC = () => {
 				console.error("Error fetching random pokemon:", error);
 			},
 		});
-	};
+	}, [fetchRandomPokemonMutation]);
 
-	const handleSavePokemon = () => {
+	const handleSavePokemon = useCallback(() => {
 		if (pokemon) {
-			savePokemonMutation.mutate(pokemon);
+			savePokemonMutation.mutate(pokemon, {
+				onSuccess: () => {
+					console.log("Pokemon saved successfully");
+				},
+				onError: (error) => {
+					console.error("Error saving pokemon:", error);
+				},
+			});
 		}
-	};
+	}, [pokemon, savePokemonMutation]);
 
 	return (
 		<IonPage>
@@ -70,7 +77,6 @@ const GeneratePokemon: React.FC = () => {
 					{pokemon && (
 						<>
 							<PokemonCard pokemon={pokemon} size="big" />
-
 							<IonButton size="small" onClick={handleSavePokemon}>
 								Save Pokemon
 							</IonButton>
