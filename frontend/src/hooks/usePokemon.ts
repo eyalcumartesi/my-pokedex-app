@@ -1,4 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// src/hooks/usePokemon.ts
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import localforage from "localforage";
 import {
 	fetchSavedPokemons,
 	fetchRandomPokemon,
@@ -8,10 +10,28 @@ import {
 } from "../api/pokemon";
 import { Pokemon } from "../types/Pokemon";
 
+localforage.config({
+	driver: localforage.INDEXEDDB, // Force WebSQL; same as using setDriver()
+	name: "my-pokedex-app",
+	version: 1.0,
+	storeName: "keyvaluepairs", // Should be alphanumeric, with underscores.
+	description: "some description",
+});
+
 export const useSavedPokemons = () => {
 	return useQuery({
 		queryKey: ["savedPokemons"],
-		queryFn: fetchSavedPokemons,
+		queryFn: async () => {
+			try {
+				const onlineData = await fetchSavedPokemons();
+				localforage.setItem("savedPokemons", onlineData);
+				return onlineData;
+			} catch (error) {
+				const offlineData =
+					await localforage.getItem<Pokemon[]>("savedPokemons");
+				return offlineData || [];
+			}
+		},
 	});
 };
 
@@ -24,17 +44,13 @@ export const useRandomPokemon = () => {
 export const useSavePokemon = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (pokemon: Pokemon) => savePokemon(pokemon),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });
+		mutationFn: async (pokemon: Pokemon) => {
+			await savePokemon(pokemon);
+			const savedPokemons =
+				await localforage.getItem<Pokemon[]>("savedPokemons");
+			const updatedPokemons = [...(savedPokemons || []), pokemon];
+			await localforage.setItem("savedPokemons", updatedPokemons);
 		},
-	});
-};
-
-export const useUpdatePokemon = () => {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: (pokemon: Pokemon) => updatePokemon(pokemon),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });
 		},
@@ -44,7 +60,33 @@ export const useUpdatePokemon = () => {
 export const useDeletePokemon = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (id: string) => deletePokemon(id),
+		mutationFn: async (id: string) => {
+			await deletePokemon(id);
+			const savedPokemons =
+				await localforage.getItem<Pokemon[]>("savedPokemons");
+			const updatedPokemons = (savedPokemons || []).filter(
+				(pokemon: Pokemon) => pokemon.id !== id
+			);
+			await localforage.setItem("savedPokemons", updatedPokemons);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });
+		},
+	});
+};
+
+export const useUpdatePokemon = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (pokemon: Pokemon) => {
+			await updatePokemon(pokemon);
+			const savedPokemons =
+				await localforage.getItem<Pokemon[]>("savedPokemons");
+			const updatedPokemons = (savedPokemons || []).map((p: Pokemon) =>
+				p.id === pokemon.id ? pokemon : p
+			);
+			await localforage.setItem("savedPokemons", updatedPokemons);
+		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });
 		},
