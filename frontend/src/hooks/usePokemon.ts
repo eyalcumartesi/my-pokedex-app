@@ -1,4 +1,3 @@
-// src/hooks/usePokemon.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import localforage from "localforage";
 import {
@@ -54,6 +53,12 @@ export const useSavePokemon = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });
 		},
+		onError: async (error, variables, context) => {
+			const savedPokemons =
+				await localforage.getItem<Pokemon[]>("savedPokemons");
+			const updatedPokemons = [...(savedPokemons || []), variables];
+			await localforage.setItem("savedPokemons", updatedPokemons);
+		},
 	});
 };
 
@@ -61,13 +66,16 @@ export const useDeletePokemon = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (id: string) => {
-			await deletePokemon(id);
-			const savedPokemons =
-				await localforage.getItem<Pokemon[]>("savedPokemons");
-			const updatedPokemons = (savedPokemons || []).filter(
-				(pokemon: Pokemon) => pokemon.id !== id
-			);
-			await localforage.setItem("savedPokemons", updatedPokemons);
+			try {
+				await deletePokemon(id);
+			} catch {
+				const savedPokemons =
+					await localforage.getItem<Pokemon[]>("savedPokemons");
+				const updatedPokemons = (savedPokemons || []).filter(
+					(pokemon: Pokemon) => pokemon.id !== id
+				);
+				await localforage.setItem("savedPokemons", updatedPokemons);
+			}
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });
@@ -79,13 +87,16 @@ export const useUpdatePokemon = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (pokemon: Pokemon) => {
-			await updatePokemon(pokemon);
-			const savedPokemons =
-				await localforage.getItem<Pokemon[]>("savedPokemons");
-			const updatedPokemons = (savedPokemons || []).map((p: Pokemon) =>
-				p.id === pokemon.id ? pokemon : p
-			);
-			await localforage.setItem("savedPokemons", updatedPokemons);
+			try {
+				await updatePokemon(pokemon);
+			} catch {
+				const savedPokemons =
+					await localforage.getItem<Pokemon[]>("savedPokemons");
+				const updatedPokemons = (savedPokemons || []).map((p: Pokemon) =>
+					p.id === pokemon.id ? pokemon : p
+				);
+				await localforage.setItem("savedPokemons", updatedPokemons);
+			}
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["savedPokemons"] });

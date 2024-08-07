@@ -9,41 +9,63 @@ export default defineConfig({
 		VitePWA({
 			// registerType: "autoUpdate",
 			injectRegister: "auto",
-			// workbox: {
-			// 	globDirectory: "dist",
-			// 	globPatterns: ["**/*.{html,js,css,png,svg,json}"],
-			// 	swDest: "dist/service-worker.js",
-			// 	runtimeCaching: [
-			// 		{
-			// 			urlPattern: ({ request }) => request.destination === "document",
-			// 			handler: "NetworkFirst",
-			// 			options: {
-			// 				cacheName: "html-cache",
-			// 			},
-			// 		},
-			// 		{
-			// 			urlPattern: ({ request }) => request.destination === "script",
-			// 			handler: "CacheFirst",
-			// 			options: {
-			// 				cacheName: "js-cache",
-			// 			},
-			// 		},
-			// 		{
-			// 			urlPattern: ({ request }) => request.destination === "style",
-			// 			handler: "CacheFirst",
-			// 			options: {
-			// 				cacheName: "css-cache",
-			// 			},
-			// 		},
-			// 		{
-			// 			urlPattern: ({ request }) => request.destination === "image",
-			// 			handler: "CacheFirst",
-			// 			options: {
-			// 				cacheName: "image-cache",
-			// 			},
-			// 		},
-			// 	],
-			// },
+			manifest: {
+				icons: [
+					{
+						src: "/icon.png",
+						sizes: "512x512",
+						type: "image/png",
+						purpose: "any maskable",
+					},
+				],
+			},
+
+			workbox: {
+				globDirectory: "dist",
+				globPatterns: ["**/*.{html,js,css,png,svg,json}"],
+				runtimeCaching: [
+					{
+						urlPattern: ({ request }) => request.destination === "document",
+						handler: "NetworkFirst",
+						options: {
+							cacheName: "html-cache",
+						},
+					},
+					{
+						urlPattern: ({ request }) => request.destination === "script",
+						handler: "CacheFirst",
+						options: {
+							cacheName: "js-cache",
+						},
+					},
+					{
+						urlPattern: ({ request }) => request.destination === "style",
+						handler: "CacheFirst",
+						options: {
+							cacheName: "css-cache",
+						},
+					},
+					{
+						urlPattern: ({ request }) => request.destination === "image",
+						handler: "CacheFirst",
+						options: {
+							cacheName: "image-cache",
+						},
+					},
+					{
+						urlPattern: ({ url }) => {
+							return url.pathname.includes("/pokemon");
+						},
+						handler: "CacheFirst" as const,
+						options: {
+							cacheName: "api-cache",
+							cacheableResponse: {
+								statuses: [0, 200],
+							},
+						},
+					},
+				],
+			},
 		}),
 	],
 	build: {
