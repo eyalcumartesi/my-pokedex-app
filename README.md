@@ -46,7 +46,7 @@ Ensure you have the following installed:
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/your-username/my-pokedex-app.git
+git clone https://github.com/eyalcumartesi/my-pokedex-app.git
 cd my-pokedex-app
 ```
 
@@ -58,7 +58,7 @@ cd api
 npm install
 
 # Install frontend dependencies
-cd ../ui
+cd ../frontend
 npm install
 ```
 
@@ -67,7 +67,7 @@ npm install
 Create a `.env` file in the `api` directory and add the following environment variables:
 
 ```
-JWT_SECRET=your_jwt_secret
+JWT_SECRET
 PORT=5050
 ```
 
@@ -77,14 +77,14 @@ PORT=5050
 
 ```bash
 cd api
-npm run start
+npm run dev
 ```
 
 2. **Start the frontend application:**
 
 ```bash
-cd ../ui
-npm run start
+cd ../frontend
+npm run dev
 ```
 
 The application should now be running on `http://localhost:3000`.
@@ -130,13 +130,9 @@ The application should now be running on `http://localhost:3000`.
 
 ## Deployment
 
-The app is deployed to a production environment. Access it via the following URL:
+The app is deployed in Vercel for the frontend and Render for the backend. Access it via the following URL:
 
-[Production URL](http://your-production-url.com)
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
+[Production URL](https://my-pokedex-app-phi.vercel.app/login)
 
 ## License
 
@@ -145,9 +141,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 Happy Pokémon catching!
-```
-
-### Notes
-
-- Ensure to replace placeholders like `https://github.com/your-username/my-pokedex-app.git` and `http://your-production-url.com` with actual values.
-- Update the license information if necessary.
