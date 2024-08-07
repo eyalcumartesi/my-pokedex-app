@@ -70,7 +70,9 @@ const PokemonCard: React.FC<{
 	return (
 		<>
 			<IonCard className={cardStyle(size)}>
-				<img src={pokemon.sprites.front_default} alt={pokemon.name} />
+				{pokemon.sprites && (
+					<img src={pokemon.sprites?.front_default} alt={pokemon.name} />
+				)}
 				<IonCardHeader
 					className={css({
 						mb: size === "big" ? "5" : "2.5",
