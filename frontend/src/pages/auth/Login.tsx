@@ -78,7 +78,7 @@ const Login: React.FC = () => {
 			<IonHeader>
 				<IonToolbar
 					className={css({
-						"--background": "var(--ion-color-primary)",
+						"--background": "black",
 					})}
 				>
 					<IonTitle>Login</IonTitle>
