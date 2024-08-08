@@ -52,18 +52,6 @@ export default defineConfig({
 							cacheName: "image-cache",
 						},
 					},
-					{
-						urlPattern: ({ url }) => {
-							return url.pathname.includes("/pokemon");
-						},
-						handler: "CacheFirst" as const,
-						options: {
-							cacheName: "api-cache",
-							cacheableResponse: {
-								statuses: [0, 200],
-							},
-						},
-					},
 				],
 			},
 		}),
